@@ -3,8 +3,32 @@ var express		= require('express');
 var fs			= require('fs');
 var io			= require('socket.io');
 var crypto		= require('crypto');
-
 var app       	= express();
+var cookieParser = require('cookie-parser');
+var SpreadSheetManager = require('../polls/spreadSheetManager');
+require('dotenv').load();
+var userResponses = {};
+var lastStates = {};
+var examConfig = JSON.parse(fs.readFileSync('../../examConfig.json', 'utf8'));
+console.log
+var spreadSheetManager = new SpreadSheetManager(process.env.GOOGLE_CREDENTIALS_PATH, process.env.SPREADSHEET_ID);
+// need cookieParser middleware before we can do anything with cookies
+app.use(cookieParser());
+
+// set a cookie
+app.use(function (req, res, next) {
+  // check if client sent cookie
+  var cookie = req.cookies.uuid;
+  if (cookie === undefined)
+  {
+    // no: set a new cookie
+    var randomNumber=Math.random().toString();
+    randomNumber=randomNumber.substring(2,randomNumber.length);
+    res.cookie('uuid',randomNumber, { maxAge: 1000 * 60 * 60 * 24 * 331, httpOnly: false });
+  } 
+  next(); // <-- important!
+});
+
 var staticDir 	= express.static;
 var server    	= http.createServer(app);
 
@@ -16,12 +40,35 @@ var opts = {
 };
 
 io.on( 'connection', function( socket ) {
+
+	for(var socketId in lastStates){
+		socket.emit(socketId, lastStates[socketId]);
+	}
 	socket.on('multiplex-statechanged', function(data) {
 		if (typeof data.secret == 'undefined' || data.secret == null || data.secret === '') return;
 		if (createHash(data.secret) === data.socketId) {
 			data.secret = null;
+			lastStates[data.socketId] = data;
 			socket.broadcast.emit(data.socketId, data);
 		};
+	});
+	socket.on('pollResponse', function(data){
+		if(data.uuid){
+			userResponses[data.uuid] = userResponses[data.uuid] || {};
+			if(!userResponses[data.uuid][data.id]){
+				userResponses[data.uuid][data.id] = data;
+				var currentQuestion = examConfig.filter(function(obj) { return obj.id === data.id; })[0];
+				if(currentQuestion){
+					var responseChoice = currentQuestion.data.responses.filter(function(obj) { return obj.text === data.responseChoice; })[0];
+					console.log(responseChoice);
+					data.responseValue = responseChoice.value || 0;
+				}
+				spreadSheetManager.addUserValue(data.uuid, data.id, data.responseValue);
+				console.log('INSERT DATA:' + JSON.stringify(data));
+			}else{
+				console.log('QUESTION ALREADY ANSWER');
+			}
+		}
 	});
 });
 

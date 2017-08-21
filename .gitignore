@@ -5,9 +5,15 @@
 out/
 .DS_Store
 .svn
+.env
 log/*.log
 tmp/**
 node_modules/
 .sass-cache
 css/reveal.min.css
 js/reveal.min.js
+
+# Exam Configuration
+
+examConfig.json
+keys
