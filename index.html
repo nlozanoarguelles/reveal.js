@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>reveal.js</title>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/grid.css">
     <link rel="stylesheet" href="css/reveal.css">
-    <link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="css/theme/divisadero.css">
     <!-- Theme used for syntax highlighting of code -->
     <link rel="stylesheet" href="lib/css/zenburn.css">
     <!-- Printing and PDF exports -->
@@ -26,31 +25,34 @@
     <div class="reveal">
         <div class="slides">
             <section id="question1" data-type="singleChoice">
+                <div class="dsd-header">
+                    <img src="./res/header_logo.png">
+                </div>
                 <br>
-                <div class="main-question" style="text-align:center;">
+                <div class="dsd-main-question" style="text-align:center;">
                     <h1>&#xBF;CUENTA TU COMPA&#xD1;&#xCD;A CON UNA DATA STRATEGY?</h1></div>
                 <br>
                 <div class="responses" style="text-align:center;">
-                    <div class="row">
-                        <div class="col-6-12">
-                            <button class="btn btn-large btn-primary" style="font-size:0.5em;">Lo desconozco</button>
+                    <div class="grid">
+                        <div class="col-6-12 mobile-col-6-12">
+                            <button class="btn btn-large btn-primary">Lo desconozco</button>
                         </div>
-                        <div class="col-6-12">
+                        <div class="col-6-12 mobile-col-6-12">
                             <button class="btn btn-large btn-primary" style="font-size:0.5em;">No, a&#xFA;n no nos encontramos en ese nivel</button>
                         </div>
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col-6-12">
+                        <div class="col-6-12 mobile-col-6-12">
                             <button class="btn btn-large btn-primary" style="font-size:0.5em;">No, ha empezado a preocuparnos</button>
                         </div>
-                        <div class="col-6-12">
+                        <div class="col-6-12 mobile-col-6-12">
                             <button class="btn btn-large btn-primary" style="font-size:0.5em;">S&#xED;, por ahora en &#xE1;reas concretas</button>
                         </div>
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col-6-12">
+                        <div class="col-6-12 mobile-col-6-12">
                             <button class="btn btn-large btn-primary" style="font-size:0.5em;">S&#xED;, hay una estrategia de compa&#xF1;&#xED;a</button>
                         </div>
                     </div>
@@ -93,7 +95,7 @@
             // Example values. To generate your own, see the socket.io server instructions.
             secret: secret, // null so the clients do not have control of the master presentation
             id: '0d8eb36da728c2f3', // id, obtained from socket.io server
-            url: 'localhost:1948' // Location of your socket.io server
+            url: location.hostname // Location of your socket.io server
         }
     });
     Reveal.addEventListener('ready', function(event) {
