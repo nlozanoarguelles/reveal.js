@@ -38,6 +38,7 @@ module.exports = function(credentialPath, spreadSheetId) {
                         var userRow = rows.filter(function(obj) { return obj.uuid === uuid; })[0];
                         if (userRow) {
                             userRow[questionId] = value;
+                            userRow.save();
                             step();
                         } else {
                             var rowToAdd = {};
