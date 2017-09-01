@@ -36,7 +36,7 @@ function PollClient(ioInstance) {
                     var ratingIndex = parseInt(jQuery('.rating-input input').val());
                     var ratingMin = jQuery('.rating-input span:first-child').data('value');
                     var ratingMax = ratingMin + jQuery('.rating-input span').length;
-                    if(isNan(ratingIndex) || ratingIndex > ratingMax || ratingIndex < ratingMin){
+                    if(isNaN(ratingIndex) || ratingIndex > ratingMax || ratingIndex < ratingMin){
                         ratingIndex = ratingMin;
                     }
                     _self.sendResponse({
