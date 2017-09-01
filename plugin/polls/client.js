@@ -33,7 +33,12 @@ function PollClient(ioInstance) {
                 var questionId = ratingElement.attr('id');
                 ratingElement.find('.submit').on('click', function() {
                     var $clickedResponse = jQuery(this);
-                    var ratingIndex = parseInt(jQuery('.rating-input input').val()) + 1;
+                    var ratingIndex = parseInt(jQuery('.rating-input input').val());
+                    var ratingMin = jQuery('.rating-input span:first-child').data('value');
+                    var ratingMax = ratingMin + jQuery('.rating-input span').length;
+                    if(isNan(ratingIndex) || ratingIndex > ratingMax || ratingIndex < ratingMin){
+                        ratingIndex = ratingMin;
+                    }
                     _self.sendResponse({
                         id: questionId,
                         type: "rating",

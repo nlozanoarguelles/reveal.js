@@ -59,15 +59,18 @@ module.exports = function(examConfig) {
                     break;
                 case "multipleText":
                     var value = 0;
-                    for(var i = 0; i < currentQuestion.data.responses.length; i++){
+                    for (var i = 0; i < currentQuestion.data.responses.length; i++) {
                         var optionToEvaluate = responseData.responses.filter(function(obj) { return obj.text === currentQuestion.data.responses[i].text; })[0];
-                        console.log('EVALUANDO.....')
-                        console.log(optionToEvaluate);
-                        console.log('SIMILARIDAD:' + similarity(optionToEvaluate.responseText, currentQuestion.data.responses[i].responseText));
-                        console.log('FIN EVALUANDO.....')
-                        if(optionToEvaluate && similarity(optionToEvaluate.responseText, currentQuestion.data.responses[i].responseText) > 0.85){
-                            value += currentQuestion.data.responses[i].value;
+                        if (optionToEvaluate) {
+                            console.log('EVALUANDO.....');
+                            console.log(optionToEvaluate);
+                            console.log('SIMILARIDAD:' + similarity(optionToEvaluate.responseText, currentQuestion.data.responses[i].responseText));
+                            console.log('FIN EVALUANDO.....')
+                            if (optionToEvaluate && similarity(optionToEvaluate.responseText, currentQuestion.data.responses[i].responseText) > 0.85) {
+                                value += currentQuestion.data.responses[i].value;
+                            }
                         }
+
                     }
                     return value;
                     break;
