@@ -9,26 +9,65 @@ function PollClient(ioInstance) {
         answerListener: {
             singleChoice: function(singleChoiceElement) {
                 var questionId = singleChoiceElement.attr('id');
-                singleChoiceElement.find('button').each(function() {
+                singleChoiceElement.find('.response-btn').each(function() {
                     jQuery(this).on('click', function() {
+                        var $clickedResponse = jQuery(this);
                         _self.sendResponse({
                             id: questionId,
                             type: "singleChoice",
                             responseChoice: jQuery(this).text()
                         });
-                        jQuery(this).removeClass('btn-primary');
-                        jQuery(this).addClass('btn-warning');
-                        singleChoiceElement.find('button').each(function() {
-                            jQuery(this).addClass('disabled');
-                        })
+                        $clickedResponse.parent().addClass('active');
+                        $clickedResponse.attr('cursor', 'not-allowed');
+                        $clickedResponse.off();
+                        singleChoiceElement.find('.response-btn').each(function() {
+                            if (jQuery(this)[0] != $clickedResponse[0]) {
+                                disableClick(jQuery(this));
+                            }
+
+                        });
                     })
                 });
             },
-            rating: function(questionData) {
-
+            rating: function(ratingElement) {
+                var questionId = ratingElement.attr('id');
+                ratingElement.find('.submit').on('click', function() {
+                    var $clickedResponse = jQuery(this);
+                    var ratingIndex = parseInt(jQuery('.rating-input input').val()) + 1;
+                    _self.sendResponse({
+                        id: questionId,
+                        type: "rating",
+                        responseChoice: 'rating-' + ratingIndex
+                    });
+                    $clickedResponse.parent().addClass('active');
+                    $clickedResponse.attr('cursor', 'not-allowed');
+                    $clickedResponse.off();
+                    jQuery('.rating-input').off();
+                });
             },
-            multiText: function(questionData) {
-
+            multipleText: function(multiTextElement) {
+                var questionId = multiTextElement.attr('id');
+                multiTextElement.find('.submit').on('click', function() {
+                    var $clickedResponse = jQuery(this);
+                    var responses = [];
+                    multiTextElement.find('.response-text-input input').each(function() {
+                        var $currentElement = jQuery(this);
+                        var responseData = {
+                            "text": $currentElement.data('text'),
+                            "responseText": $currentElement.val(),
+                        };
+                        responses.push(responseData);
+                    });
+                    _self.sendResponse({
+                        id: questionId,
+                        type: "multipleText",
+                        responses: responses
+                    });
+                    $clickedResponse.parent().addClass('active');
+                    $clickedResponse.attr('cursor', 'not-allowed');
+                    $clickedResponse.off();
+                    jQuery('#' + questionId + ' .response-text-input input').each(function() { jQuery(this).prop('disabled', true); });
+                });
             },
             freeText: function(questionData) {
 
@@ -36,10 +75,17 @@ function PollClient(ioInstance) {
         }
     }
 
+    function disableClick(anchorTag) {
+        anchorTag.attr('cursor', 'not-allowed');
+        anchorTag.parent().addClass('disabled');
+        anchorTag.off();
+
+    }
+
     function getCookie(c_name) {
         //cambiar la parte [a-zA-Z0-9] por el diccionario de caracteres valido
         //Nota: los espacios estan puestos tal cual no como \s
-        var string = " ?" + c_name + "=( *[a-zA-Z0-9]*)*";
+        var string = " ?" + c_name + "=( *[a-zA-Z0-9\-\_]*)*";
         var regex = new RegExp(string);
         //var c_value = document.cookie;
         var c_value = document.cookie;
@@ -59,7 +105,7 @@ function PollClient(ioInstance) {
 
     _self.sendResponse = function(data, callback) {
         if (!_self.answerManager.answeredQuestions.filter(function(obj) { return obj.id === data.id; })[0]) {
-            data.uuid =  getCookie("uuid");
+            data.uuid = getCookie("uuid");
             socket.emit("pollResponse", data);
             console.log(data);
             _self.answerManager.answeredQuestions.push(data);

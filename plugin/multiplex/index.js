@@ -5,6 +5,7 @@ var io			= require('socket.io');
 var crypto		= require('crypto');
 var app       	= express();
 var cookieParser = require('cookie-parser');
+var QuestionManager = require('../polls/questionManager');
 var SpreadSheetManager = require('../polls/spreadSheetManager');
 require('dotenv').load();
 var userResponses = {};
@@ -12,6 +13,7 @@ var lastStates = {};
 var examConfig = JSON.parse(fs.readFileSync('../../examConfig.json', 'utf8'));
 console.log
 var spreadSheetManager = new SpreadSheetManager(process.env.GOOGLE_CREDENTIALS_PATH, process.env.SPREADSHEET_ID);
+var questionManager =  new QuestionManager(examConfig);
 // need cookieParser middleware before we can do anything with cookies
 app.use(cookieParser());
 
@@ -57,12 +59,12 @@ io.on( 'connection', function( socket ) {
 			userResponses[data.uuid] = userResponses[data.uuid] || {};
 			if(!userResponses[data.uuid][data.id]){
 				userResponses[data.uuid][data.id] = data;
-				var currentQuestion = examConfig.filter(function(obj) { return obj.id === data.id; })[0];
-				if(currentQuestion){
-					var responseChoice = currentQuestion.data.responses.filter(function(obj) { return obj.text === data.responseChoice; })[0];
-					console.log(responseChoice);
-					data.responseValue = responseChoice.value || 0;
+				try{
+					data.responseValue = questionManager.getQuestionValue(data);
+				}catch(e){
+					data.responseValue = "ERROR";
 				}
+				
 				spreadSheetManager.addUserValue(data.uuid, data.id, data.responseValue);
 				console.log('INSERT DATA:' + JSON.stringify(data));
 			}else{
