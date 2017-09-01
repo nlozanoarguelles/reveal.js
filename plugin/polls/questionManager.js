@@ -48,7 +48,7 @@ module.exports = function(examConfig) {
     }
 
     _self.getQuestionValue = function(responseData) {
-        var currentQuestion = examConfig.filter(function(obj) { return obj.id === responseData.id; })[0];
+        var currentQuestion = examConfig.filter(function(obj) { return obj.id == responseData.id; })[0];
         if (currentQuestion) {
             console.log(responseData);
             switch (responseData.type) {
