@@ -8,7 +8,7 @@ module.exports = function() {
     };
 
     var headerGenerator = function() {
-        var header = cheerio('<div class="dsd-header"><img src="./res/header_logo.png"></div>');
+        var header = cheerio('<div class="dsd-header"><img src="./res/header_logo.png"></div><h3 class="header-separator"><span>#BAROMETROQUIZ</span></h3>');
         return header;
     }
 
@@ -30,12 +30,12 @@ module.exports = function() {
     }
 
     var columnGenerator = function(columnSize) {
-        var column = cheerio('<div class="col-' + columnSize + '-12 mobile-col-1-1 response"></div>');
+        var column = cheerio('<div class="col-' + columnSize + '-12 mobile-col-1-1"><div class="response response-single-choice"></div></div>');
         return column;
     }
 
     var starsInputGenerator = function(starsNumber) {
-        var starsBlock = cheerio('<div style="font-size:9em;"> <input type="number" class="rating" id="rating" name="test" data-min="1" data-max="' + starsNumber + '" value="0"> </div>');
+        var starsBlock = cheerio('<div style="font-size:7em;"> <input type="number" class="rating" id="rating" name="test" data-min="1" data-max="' + starsNumber + '" value="0"> </div>');
         return starsBlock;
     }
 
@@ -54,7 +54,6 @@ module.exports = function() {
         var header = headerGenerator();
         section.append(header);
         var mainQuestion = mainQuestionGenerator(questionData.data.mainQuestion);
-        section.append('<br>');
         section.append(mainQuestion);
         var responses = responsesGenerator();
         // Three columns set-up or two columns set-up
@@ -64,14 +63,15 @@ module.exports = function() {
         for (var i = 0; i < questionData.data.responses.length; i++) {
             var column = columnGenerator(mdValue);
             var buttonContent = cheerio('<a href="#" class="response-btn">' + questionData.data.responses[i].text + '</a>');
-            column.append(buttonContent);
+            column.find('.response').append(buttonContent);
             row.append(column);
             if (i % columnSetUp == (columnSetUp - 1) || questionData.data.responses.length - 1 == i) {
-                responses.append(row);
-                responses.append('<br>');
-                var row = rowGenerator();
+                row.append('<div class="grid-break mobile-col-1-1 col-1-1"></div>');
+            }else{
+                row.append('<div class="grid-break mobile-col-1-1"></div>');
             }
         }
+        responses.append(row);
         section.append('<br>');
         section.append(responses);
         return section;
@@ -84,7 +84,6 @@ module.exports = function() {
         var header = headerGenerator();
         section.append(header);
         var mainQuestion = mainQuestionGenerator(questionData.data.mainQuestion);
-        section.append('<br>');
         section.append(mainQuestion);
         var responses = responsesGenerator();
         var starsInput = starsInputGenerator(questionData.data.responses.length);
@@ -101,7 +100,6 @@ module.exports = function() {
         var header = headerGenerator();
         section.append(header);
         var mainQuestion = mainQuestionGenerator(questionData.data.mainQuestion);
-        section.append('<br>');
         section.append(mainQuestion);
         var responses = responsesGenerator();
         // Three columns set-up or two columns set-up
@@ -113,11 +111,12 @@ module.exports = function() {
             var textInput = textInputGenerator(mdValue, questionData.data.responses[i].text);
             row.append(textInput);
             if (i % columnSetUp == (columnSetUp - 1) || maxInputs - 1 == i) {
-                responses.append(row);
-                responses.append('<br>');
-                var row = rowGenerator();
+               row.append('<div class="grid-break mobile-col-1-1 col-1-1"></div>');                
+            }else{
+                row.append('<div class="grid-break mobile-col-1-1"></div>');
             }
         }
+        responses.append(row);
         section.append('<br>');
         section.append(responses);
         section.append('<br>');

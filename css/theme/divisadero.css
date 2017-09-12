@@ -8,6 +8,9 @@
 
 
 
+
+
+
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
@@ -41,6 +44,9 @@ body {
     line-height: 1.3;
     font-weight: inherit;
 }
+
+
+
 
 
 
@@ -89,6 +95,9 @@ body {
 
 
 
+
+
+
 /*********************************************
  * OTHER
  *********************************************/
@@ -97,6 +106,9 @@ body {
     margin: 20px 0;
     line-height: 1.3;
 }
+
+
+
 
 
 
@@ -263,6 +275,9 @@ body {
 
 
 
+
+
+
 /*********************************************
  * LINKS
  *********************************************/
@@ -285,6 +300,9 @@ body {
     color: #fff;
     background: #d08a1d;
 }
+
+
+
 
 
 
@@ -313,6 +331,9 @@ body {
     border-color: #e7ad52;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
 }
+
+
+
 
 
 
@@ -360,6 +381,9 @@ body {
 
 
 
+
+
+
 /*********************************************
  * PROGRESS BAR
  *********************************************/
@@ -374,6 +398,9 @@ body {
     -moz-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
     transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
 }
+
+
+
 
 
 
@@ -397,7 +424,11 @@ body {
 }
 
 .dsd-main-question {
+    padding: 10px !important;
     text-align: center;
+    background: url("../../res/question_box.png");
+    background-size:100% 100%;
+    background-repeat: no-repeat;
 }
 
 
@@ -412,6 +443,12 @@ div.response {
     border-color: #e7ad52;
     padding: 5px;
     background-color: rgba(125, 120, 120, 0.5);
+}
+
+div.response-single-choice {
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto
 }
 
 div.response:hover {
@@ -433,7 +470,7 @@ div.response.disabled {
 @media only screen and (max-device-width: 748px) {
 
     .dsd-main-question h1 {
-        font-size: 3em;
+        font-size: 2.5em;
     }
 
     a.response-btn {
@@ -447,7 +484,7 @@ div.response.disabled {
     }
     input.response {
         font-size: 2.5em;
-        min-height: 36px;
+        height: 36px;
     }
     div.response-text-input {
         margin-bottom: 15px;
@@ -456,8 +493,11 @@ div.response.disabled {
 
 @media only screen and (min-device-width: 748px) {
 
+    div.response-single-choice {
+        width: 90%;
+    }
     .dsd-main-question h1 {
-        font-size: 2em;
+        font-size: 1.5em;
     }
 
     a.response-btn {
@@ -471,14 +511,15 @@ div.response.disabled {
     }
     input.response {
         font-size: 1.5em;
-        min-height: 36px;
+        height: 36px;
         width: 90%;
     }
 }
 
 div.response-label {
     background: #8e8e8e;
-    min-height: 40px;
+    height: 42px;
+    line-height: 42px;
 }
 
 a.response-btn {
@@ -486,4 +527,37 @@ a.response-btn {
     text-decoration: none;
     display: block;
     height: 100%;
+}
+
+.header-separator {
+    margin-top: 40px;
+    text-align: right;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+}
+
+
+.header-separator:before {
+    border-top: 3px solid #fff;
+    content: "";
+    margin: 0 auto;
+    /* this centers the line to the full width specified */
+    position: absolute;
+    /* positioning must be absolute here, and relative positioning must be applied to the parent */
+    top: 50%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.header-separator span {
+    /* to hide the lines from behind the text, you have to set the background color the same as the container */
+    background: #00ADDA;
+    padding: 0 15px;
+}
+
+.grid-break {
+    height: 20px;
 }
