@@ -34,9 +34,9 @@ function PollClient(ioInstance) {
                 ratingElement.find('.submit').on('click', function(e) {
                     e.preventDefault();
                     var $clickedResponse = jQuery(this);
-                    var ratingIndex = parseInt(jQuery('.rating-input input').val());
-                    var ratingMin = jQuery('.rating-input span:first-child').data('value');
-                    var ratingMax = ratingMin + jQuery('.rating-input span').length;
+                    var ratingIndex = parseInt(ratingElement.find('.rating-input input').val());
+                    var ratingMin = ratingElement.find('.rating-input span:first-child').data('value');
+                    var ratingMax = ratingMin + ratingElement.find('.rating-input span').length;
                     if (isNaN(ratingIndex) || ratingIndex > ratingMax || ratingIndex < ratingMin) {
                         ratingIndex = ratingMin;
                     }
