@@ -46,7 +46,7 @@ function PollClient(ioInstance) {
                     $clickedResponse.parent().addClass('active');
                     $clickedResponse.attr('cursor', 'not-allowed');
                     $clickedResponse.off();
-                    jQuery('.rating-input').off();
+                    ratingElement.find('.rating-input').off();
                 });
             },
             multipleText: function(multiTextElement) {
