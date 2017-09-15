@@ -10,7 +10,8 @@ function PollClient(ioInstance) {
             singleChoice: function(singleChoiceElement) {
                 var questionId = singleChoiceElement.attr('id');
                 singleChoiceElement.find('.response-btn').each(function() {
-                    jQuery(this).on('click', function() {
+                    jQuery(this).on('click', function(e) {
+                        e.preventDefault();
                         var $clickedResponse = jQuery(this);
                         _self.sendResponse({
                             id: questionId,
@@ -30,7 +31,8 @@ function PollClient(ioInstance) {
             },
             rating: function(ratingElement) {
                 var questionId = ratingElement.attr('id');
-                ratingElement.find('.submit').on('click', function() {
+                ratingElement.find('.submit').on('click', function(e) {
+                    e.preventDefault();
                     var $clickedResponse = jQuery(this);
                     var ratingIndex = parseInt(jQuery('.rating-input input').val());
                     var ratingMin = jQuery('.rating-input span:first-child').data('value');
@@ -51,7 +53,8 @@ function PollClient(ioInstance) {
             },
             multipleText: function(multiTextElement) {
                 var questionId = multiTextElement.attr('id');
-                multiTextElement.find('.submit').on('click', function() {
+                multiTextElement.find('.submit').on('click', function(e) {
+                    e.preventDefault();
                     var $clickedResponse = jQuery(this);
                     var responses = [];
                     multiTextElement.find('.response-text-input input').each(function() {
@@ -77,7 +80,8 @@ function PollClient(ioInstance) {
                 var questionId = multiChoiceElement.attr('id');
 
                 multiChoiceElement.find('.response-btn').each(function() {
-                    jQuery(this).on('click', function() {
+                    jQuery(this).on('click', function(e) {
+                        e.preventDefault();
                         var $clickedResponse = jQuery(this);
 
                         $clickedResponse.parent().toggleClass('active');
@@ -85,7 +89,8 @@ function PollClient(ioInstance) {
                 });
 
 
-                multiChoiceElement.find('.submit').on('click', function() {
+                multiChoiceElement.find('.submit').on('click', function(e) {
+                    e.preventDefault();
                     var $clickedResponse = jQuery(this);
                     var responses = [];
                     multiChoiceElement.find('.active').each(function() {

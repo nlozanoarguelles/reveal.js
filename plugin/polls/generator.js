@@ -7,7 +7,7 @@ module.exports = function() {
         if (questionType != "separator") {
             classBlock = "class=\"quiz-question\"";
         }
-        var backgroundImage = "" || backgroundImage;
+        var backgroundImage = backgroundImage || "";
         var mainSection = cheerio('<section ' + classBlock + ' id="' + questionId + '" data-type="' + questionType + '" data-background-image="' + backgroundImage + '"></section>');
         return mainSection;
     };
