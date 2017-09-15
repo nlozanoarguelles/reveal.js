@@ -24,7 +24,6 @@ function PollClient(ioInstance) {
                             if (jQuery(this)[0] != $clickedResponse[0]) {
                                 disableClick(jQuery(this));
                             }
-
                         });
                     })
                 });
@@ -36,7 +35,7 @@ function PollClient(ioInstance) {
                     var ratingIndex = parseInt(jQuery('.rating-input input').val());
                     var ratingMin = jQuery('.rating-input span:first-child').data('value');
                     var ratingMax = ratingMin + jQuery('.rating-input span').length;
-                    if(isNaN(ratingIndex) || ratingIndex > ratingMax || ratingIndex < ratingMin){
+                    if (isNaN(ratingIndex) || ratingIndex > ratingMax || ratingIndex < ratingMin) {
                         ratingIndex = ratingMin;
                     }
                     _self.sendResponse({
@@ -72,6 +71,41 @@ function PollClient(ioInstance) {
                     $clickedResponse.attr('cursor', 'not-allowed');
                     $clickedResponse.off();
                     jQuery('#' + questionId + ' .response-text-input input').each(function() { jQuery(this).prop('disabled', true); });
+                });
+            },
+            multipleChoice: function(multiChoiceElement) {
+                var questionId = multiChoiceElement.attr('id');
+
+                multiChoiceElement.find('.response-btn').each(function() {
+                    jQuery(this).on('click', function() {
+                        var $clickedResponse = jQuery(this);
+
+                        $clickedResponse.parent().toggleClass('active');
+                    })
+                });
+
+
+                multiChoiceElement.find('.submit').on('click', function() {
+                    var $clickedResponse = jQuery(this);
+                    var responses = [];
+                    multiChoiceElement.find('.active').each(function() {
+                        var $currentElement = jQuery(this);
+                        var responseData = {
+                            "text": $currentElement.data('text')
+                        };
+                        responses.push(responseData);
+                    });
+                    _self.sendResponse({
+                        id: questionId,
+                        type: "multipleChoice",
+                        responses: responses
+                    });
+                    $clickedResponse.parent().addClass('active');
+                    $clickedResponse.attr('cursor', 'not-allowed');
+                    $clickedResponse.off();
+                    multiChoiceElement.find('.response-btn').each(function() {
+                        disableClick(jQuery(this));
+                    });
                 });
             },
             freeText: function(questionData) {

@@ -2,10 +2,17 @@
 const cheerio = require('cheerio');
 module.exports = function() {
     var _self = this;
-    var sectionGenerator = function(questionId, questionType) {
-        var mainSection = cheerio('<section id="' + questionId + '" data-type="' + questionType + '"></section>');
+    var sectionGenerator = function(questionId, questionType, backgroundImage) {
+        var classBlock = "";
+        if (questionType != "separator") {
+            classBlock = "class=\"quiz-question\"";
+        }
+        var backgroundImage = "" || backgroundImage;
+        var mainSection = cheerio('<section ' + classBlock + ' id="' + questionId + '" data-type="' + questionType + '" data-background-image="' + backgroundImage + '"></section>');
         return mainSection;
     };
+
+
 
     var headerGenerator = function() {
         var header = cheerio('<div class="dsd-header"><img src="./res/header_logo.png"></div><h3 class="header-separator"><span>#BAROMETROQUIZ</span></h3>');
@@ -31,6 +38,11 @@ module.exports = function() {
 
     var columnGenerator = function(columnSize) {
         var column = cheerio('<div class="col-' + columnSize + '-12 mobile-col-1-1"><div class="response response-single-choice"></div></div>');
+        return column;
+    }
+
+    var columnWithTextGenerator = function(columnSize, fieldText) {
+        var column = cheerio('<div class="col-' + columnSize + '-12 mobile-col-1-1" ><div class="response response-single-choice" data-text="' + fieldText + '" ></div></div>');
         return column;
     }
 
@@ -67,13 +79,43 @@ module.exports = function() {
             row.append(column);
             if (i % columnSetUp == (columnSetUp - 1) || questionData.data.responses.length - 1 == i) {
                 row.append('<div class="grid-break mobile-col-1-1 col-1-1"></div>');
-            }else{
+            } else {
                 row.append('<div class="grid-break mobile-col-1-1"></div>');
             }
         }
         responses.append(row);
         section.append('<br>');
         section.append(responses);
+        return section;
+    }
+
+    _self.multipleChoiceGenerator = function(questionData) {
+        var section = sectionGenerator(questionData.id, questionData.type);
+        var header = headerGenerator();
+        section.append(header);
+        var mainQuestion = mainQuestionGenerator(questionData.data.mainQuestion);
+        section.append(mainQuestion);
+        var responses = responsesGenerator();
+        // Three columns set-up or two columns set-up
+        var columnSetUp = questionData.data.responses.length > 6 ? 3 : 2;
+        var mdValue = 12 / columnSetUp;
+        var row = rowGenerator();
+        for (var i = 0; i < questionData.data.responses.length; i++) {
+            var column = columnWithTextGenerator(mdValue, questionData.data.responses[i].text);
+            var buttonContent = cheerio('<a href="#" class="response-btn">' + questionData.data.responses[i].text + '</a>');
+            column.find('.response').append(buttonContent);
+            row.append(column);
+            if (i % columnSetUp == (columnSetUp - 1) || questionData.data.responses.length - 1 == i) {
+                row.append('<div class="grid-break mobile-col-1-1 col-1-1"></div>');
+            } else {
+                row.append('<div class="grid-break mobile-col-1-1"></div>');
+            }
+        }
+        responses.append(row);
+        section.append('<br>');
+        section.append(responses);
+        var submitBlock = submitGenerator();
+        section.append(submitBlock);
         return section;
     }
 
@@ -111,8 +153,8 @@ module.exports = function() {
             var textInput = textInputGenerator(mdValue, questionData.data.responses[i].text);
             row.append(textInput);
             if (i % columnSetUp == (columnSetUp - 1) || maxInputs - 1 == i) {
-               row.append('<div class="grid-break mobile-col-1-1 col-1-1"></div>');                
-            }else{
+                row.append('<div class="grid-break mobile-col-1-1 col-1-1"></div>');
+            } else {
                 row.append('<div class="grid-break mobile-col-1-1"></div>');
             }
         }
@@ -125,18 +167,34 @@ module.exports = function() {
         return section;
     }
 
-    _self.completeGenerator =  function(examConfig){
+    _self.separatorGenerator = function(questionData) {
+        var section = sectionGenerator(questionData.id, questionData.type, questionData.data.background);
+        var title = cheerio('<h1>' + questionData.data.title + '</h1>');
+        var subTitle = cheerio('<h3>' + questionData.data.subtitle + '</h3>');
+        section.append(title);
+        section.append('<br>');
+        section.append(subTitle);
+        return section;
+    }
+
+    _self.completeGenerator = function(examConfig) {
         var container = "";
-        for(var i = 0; i < examConfig.length; i++){
-            switch(examConfig[i].type){
+        for (var i = 0; i < examConfig.length; i++) {
+            switch (examConfig[i].type) {
                 case "singleChoice":
                     container += _self.singleChoiceGenerator(examConfig[i]).toString();
+                    break;
+                case "multipleChoice":
+                    container += _self.multipleChoiceGenerator(examConfig[i]).toString();
                     break;
                 case "multipleText":
                     container += _self.multipleTextGenerator(examConfig[i]).toString();
                     break;
                 case "rating":
                     container += _self.ratingGenerator(examConfig[i]).toString();
+                    break;
+                case "separator":
+                    container += _self.separatorGenerator(examConfig[i]).toString();
                     break;
             }
         }

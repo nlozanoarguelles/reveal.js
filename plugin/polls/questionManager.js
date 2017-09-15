@@ -57,6 +57,22 @@ module.exports = function(examConfig) {
                     var responseChoice = currentQuestion.data.responses.filter(function(obj) { return obj.text === responseData.responseChoice; })[0];
                     return responseChoice.value || 0;
                     break;
+                case "multipleChoice":
+                    var value = "";
+                    for (var i = 0; i < currentQuestion.data.responses.length; i++) {
+                        var optionToEvaluate = responseData.responses.filter(function(obj) { return obj.text === currentQuestion.data.responses[i].text; })[0];
+                        if (optionToEvaluate) {
+                            value += "\"" + optionToEvaluate.text + "\"";
+                            if(i < currentQuestion.data.responses.length - 1){
+                                value += ",";
+                            }
+                        }else{
+                            value += ",";
+                        }
+
+                    }
+                    return value;
+                    break;
                 case "multipleText":
                     var value = 0;
                     for (var i = 0; i < currentQuestion.data.responses.length; i++) {
