@@ -676,6 +676,18 @@
             }
         });
     });
+
+    // Lock screen for smartphones
+    try{
+        if(screen.availWidth <=748){
+            screen.lockOrientationUniversal = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+            screen.lockOrientationUniversal("portrait");
+        }
+    }catch(e){
+        console.error("ERROR TRYING TO HANDLE SCREEN POSITION");
+    }
+    
+
     </script>
 </body>
 
