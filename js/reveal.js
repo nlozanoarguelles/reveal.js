@@ -1791,7 +1791,13 @@
 				else {
 					dom.slides.style.zoom = '';
 					dom.slides.style.left = '50%';
-					dom.slides.style.top = '50%';
+					if(screen.height > 740){
+						dom.slides.style.top = '50%';
+					}else if(screen.height >= 640){
+						dom.slides.style.top = '35%';
+					}else{
+						dom.slides.style.top = '30%';
+					}
 					dom.slides.style.bottom = 'auto';
 					dom.slides.style.right = 'auto';
 					transformSlides( { layout: 'translate(-50%, -50%) scale('+ scale +')' } );

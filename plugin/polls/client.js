@@ -9,16 +9,27 @@ function PollClient(ioInstance) {
         answerListener: {
             singleChoice: function(singleChoiceElement) {
                 var questionId = singleChoiceElement.attr('id');
-                singleChoiceElement.find('.response-btn').each(function() {
+                singleChoiceElement.find('.response-btn:not(.submit)').each(function() {
                     jQuery(this).on('click', function(e) {
                         e.preventDefault();
                         var $clickedResponse = jQuery(this);
+                        $clickedResponse.parent().addClass('active');
+                        singleChoiceElement.find('.response-btn').each(function() {
+                            if (jQuery(this)[0] != $clickedResponse[0]) {
+                                jQuery(this).parent().removeClass('active');
+                            }
+                        });
+                    })
+                });
+                singleChoiceElement.find('.submit').on('click', function(e) {
+                    e.preventDefault();
+                    if(singleChoiceElement.find('.active .response-btn').length > 0){
+                        var $clickedResponse = singleChoiceElement.find('.active .response-btn');
                         _self.sendResponse({
                             id: questionId,
                             type: "singleChoice",
-                            responseChoice: jQuery(this).text()
+                            responseChoice: $clickedResponse.text()
                         });
-                        $clickedResponse.parent().addClass('active');
                         $clickedResponse.attr('cursor', 'not-allowed');
                         $clickedResponse.off();
                         singleChoiceElement.find('.response-btn').each(function() {
@@ -26,7 +37,7 @@ function PollClient(ioInstance) {
                                 disableClick(jQuery(this));
                             }
                         });
-                    })
+                    }
                 });
             },
             rating: function(ratingElement) {

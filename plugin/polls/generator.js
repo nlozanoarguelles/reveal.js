@@ -86,6 +86,8 @@ module.exports = function() {
         responses.append(row);
         section.append('<br>');
         section.append(responses);
+        var submitBlock = submitGenerator();
+        section.append(submitBlock);
         return section;
     }
 
@@ -133,6 +135,8 @@ module.exports = function() {
         section.append('<br>');
         section.append(responses);
         var submitBlock = submitGenerator();
+        section.append('<br>');
+        section.append('<br>');
         section.append(submitBlock);
         return section;
     }
