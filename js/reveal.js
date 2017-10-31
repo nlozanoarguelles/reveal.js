@@ -1794,9 +1794,9 @@
 					if(screen.height > 740){
 						dom.slides.style.top = '50%';
 					}else if(screen.height >= 640){
-						dom.slides.style.top = '35%';
+						dom.slides.style.top = '25%';
 					}else{
-						dom.slides.style.top = '30%';
+						dom.slides.style.top = '20%';
 					}
 					dom.slides.style.bottom = 'auto';
 					dom.slides.style.right = 'auto';
