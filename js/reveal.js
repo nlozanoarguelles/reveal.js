@@ -1791,12 +1791,12 @@
 				else {
 					dom.slides.style.zoom = '';
 					dom.slides.style.left = '50%';
-					if(screen.height > 740){
+					if(screen.height > 740 && !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))){
 						dom.slides.style.top = '50%';
 					}else if(screen.height >= 640){
-						dom.slides.style.top = '25%';
+						dom.slides.style.top = '35%';
 					}else{
-						dom.slides.style.top = '20%';
+						dom.slides.style.top = '10%';
 					}
 					dom.slides.style.bottom = 'auto';
 					dom.slides.style.right = 'auto';

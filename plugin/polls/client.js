@@ -23,7 +23,7 @@ function PollClient(ioInstance) {
                 });
                 singleChoiceElement.find('.submit').on('click', function(e) {
                     e.preventDefault();
-                    if(singleChoiceElement.find('.active .response-btn').length > 0){
+                    if (singleChoiceElement.find('.active .response-btn').length > 0) {
                         var $clickedResponse = singleChoiceElement.find('.active .response-btn');
                         _self.sendResponse({
                             id: questionId,
@@ -32,6 +32,7 @@ function PollClient(ioInstance) {
                         });
                         $clickedResponse.attr('cursor', 'not-allowed');
                         $clickedResponse.off();
+                        $clickedResponse.on('click', function(e) { e.preventDefault(); });
                         singleChoiceElement.find('.response-btn').each(function() {
                             if (jQuery(this)[0] != $clickedResponse[0]) {
                                 disableClick(jQuery(this));
@@ -56,9 +57,11 @@ function PollClient(ioInstance) {
                         type: "rating",
                         responseChoice: 'rating-' + ratingIndex
                     });
-                    $clickedResponse.parent().addClass('active');
+                    
                     $clickedResponse.attr('cursor', 'not-allowed');
                     $clickedResponse.off();
+                    disableClick($clickedResponse);
+                    $clickedResponse.on('click', function(e) { e.preventDefault(); });
                     ratingElement.find('.rating-input').off();
                 });
             },
@@ -81,16 +84,18 @@ function PollClient(ioInstance) {
                         type: "multipleText",
                         responses: responses
                     });
-                    $clickedResponse.parent().addClass('active');
                     $clickedResponse.attr('cursor', 'not-allowed');
                     $clickedResponse.off();
-                    jQuery('#' + questionId + ' .response-text-input input').each(function() { jQuery(this).prop('disabled', true); });
+                    $clickedResponse.on('click', function(e) { e.preventDefault(); });
+                    jQuery('#' + questionId + ' .response-text-input input').each(function() {
+                        jQuery(this).prop('disabled', true);
+                    });
                 });
             },
             multipleChoice: function(multiChoiceElement) {
                 var questionId = multiChoiceElement.attr('id');
 
-                multiChoiceElement.find('.response-btn').each(function() {
+                multiChoiceElement.find('.response-btn:not(.submit)').each(function() {
                     jQuery(this).on('click', function(e) {
                         e.preventDefault();
                         var $clickedResponse = jQuery(this);
@@ -110,17 +115,23 @@ function PollClient(ioInstance) {
                             "text": $currentElement.data('text')
                         };
                         responses.push(responseData);
+                        $currentElement.attr('cursor', 'not-allowed');
+                        $currentElement.off();
+                        $currentElement.on('click', function(e) { e.preventDefault(); });
                     });
                     _self.sendResponse({
                         id: questionId,
                         type: "multipleChoice",
                         responses: responses
                     });
-                    $clickedResponse.parent().addClass('active');
                     $clickedResponse.attr('cursor', 'not-allowed');
                     $clickedResponse.off();
+                    $clickedResponse.on('click', function(e) { e.preventDefault(); });
                     multiChoiceElement.find('.response-btn').each(function() {
-                        disableClick(jQuery(this));
+                        if(!jQuery(this).parent().hasClass('active')){
+                            disableClick(jQuery(this));
+                        }
+                        
                     });
                 });
             },
@@ -134,6 +145,7 @@ function PollClient(ioInstance) {
         anchorTag.attr('cursor', 'not-allowed');
         anchorTag.parent().addClass('disabled');
         anchorTag.off();
+        anchorTag.on('click', function(e) { e.preventDefault(); });
 
     }
 

@@ -52,7 +52,7 @@ module.exports = function() {
     }
 
     var submitGenerator = function() {
-        var submitBlock = cheerio('<div class="response submit" style="text-align:center;"> <a href="#" class="response-btn submit"> Enviar </a> </div>');
+        var submitBlock = cheerio('<div class="response submit" style="text-align:center;"> <a href="#" class="response-btn submit"> Enviar   <i class="fa fa-play" aria-hidden="true"></i> </a> </div>');
         return submitBlock;
     }
 
