@@ -6,6 +6,7 @@ function PollClient(ioInstance) {
     var socket = io.connect(socketURL);
     _self.answerManager = {
         answeredQuestions: [],
+        pollResutls: {},
         answerListener: {
             singleChoice: function(singleChoiceElement) {
                 var questionId = singleChoiceElement.attr('id');
@@ -57,7 +58,7 @@ function PollClient(ioInstance) {
                         type: "rating",
                         responseChoice: 'rating-' + ratingIndex
                     });
-                    
+
                     $clickedResponse.attr('cursor', 'not-allowed');
                     $clickedResponse.off();
                     disableClick($clickedResponse);
@@ -128,16 +129,34 @@ function PollClient(ioInstance) {
                     $clickedResponse.off();
                     $clickedResponse.on('click', function(e) { e.preventDefault(); });
                     multiChoiceElement.find('.response-btn').each(function() {
-                        if(!jQuery(this).parent().hasClass('active')){
+                        if (!jQuery(this).parent().hasClass('active')) {
                             disableClick(jQuery(this));
                         }
-                        
+
                     });
                 });
             },
             freeText: function(questionData) {
 
             }
+        },
+        barometroResults: {
+            "question1": 55,
+            "question2": 48,
+            "question3": 52,
+            "question4": 38,
+            "question5": 59,
+            "question6": 64,
+            "question7": 42,
+            "question8": 47,
+            "question9": 41,
+            "question10": 49,
+            "question11": 44,
+            "question12": 51,
+            "question13": 50,
+            "question14": 50,
+            "question15": 50,
+            "question16": 51
         }
     }
 
@@ -166,7 +185,7 @@ function PollClient(ioInstance) {
     }
 
     _self.setAnsweredQuestions = function(answeredQuestions) {
-        answerManager.answeredQuestions = answeredQuestions;
+        _self.answerManager.answeredQuestions = answeredQuestions;
 
     }
 
@@ -184,4 +203,49 @@ function PollClient(ioInstance) {
             callback(false);
         }
     }
+
+    socket.on('pollResults', function(pollResults) {
+        _self.pollResults = pollResults;
+        console.log(pollResults);
+        for (var questionId in pollResults) {
+            var ctx = document.getElementById(questionId + '-results-chart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        label: 'barometro',
+                        data: [_self.answerManager.barometroResults[questionId]],
+                        backgroundColor: [
+                            'rgba(68, 80, 154, 1)',
+
+                        ],
+                        borderColor: [
+                            'rgba(68,80,154,1)',
+
+                        ],
+                        borderWidth: 1
+                    }, {
+                        label: 'DIVISADERO',
+                        data: [pollResults[questionId].responseValue / pollResults[questionId].numResponses],
+                        backgroundColor: [
+                            'rgba(239, 106, 39, 1)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 106, 39, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+    });
 }

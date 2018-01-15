@@ -4,7 +4,7 @@ module.exports = function() {
     var _self = this;
     var sectionGenerator = function(questionId, questionType, backgroundImage) {
         var classBlock = "";
-        if (questionType != "separator") {
+        if (questionType != "separator" && questionType != "results") {
             classBlock = "class=\"quiz-question\"";
         }
         var backgroundImage = backgroundImage || "";
@@ -181,6 +181,14 @@ module.exports = function() {
         return section;
     }
 
+    _self.resultsGenerator = function(questionData) {
+        var section = sectionGenerator(questionData.id, questionData.type, questionData.data.background);
+        var canvas = cheerio('<canvas id="' + questionData.id + '-chart" width="300" height="300"></canvas');
+        section.append(canvas);
+        section.append('<br>');
+        return section;
+    }
+
     _self.completeGenerator = function(examConfig) {
         var container = "";
         for (var i = 0; i < examConfig.length; i++) {
@@ -199,6 +207,9 @@ module.exports = function() {
                     break;
                 case "separator":
                     container += _self.separatorGenerator(examConfig[i]).toString();
+                    break;
+                case "results":
+                    container += _self.resultsGenerator(examConfig[i]).toString();
                     break;
             }
         }

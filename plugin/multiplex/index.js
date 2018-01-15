@@ -10,6 +10,7 @@ var SpreadSheetManager = require('../polls/spreadSheetManager');
 require('dotenv').load();
 var userResponses = {};
 var lastStates = {};
+var pollResults = {};
 var examConfig = JSON.parse(fs.readFileSync('../../examConfig.json', 'utf8'));
 console.log
 var spreadSheetManager = new SpreadSheetManager(process.env.GOOGLE_CREDENTIALS_PATH, process.env.SPREADSHEET_ID);
@@ -66,7 +67,23 @@ io.on( 'connection', function( socket ) {
 				}
 				
 				spreadSheetManager.addUserValue(data.uuid, data.id, data.responseValue);
+				fs.appendFileSync(process.env.RESULTS_PATH, JSON.stringify({
+					id:data.id,
+					uuid: data.uuid,
+					responseValue:data.responseValue
+				})+ "\n");
+				if(pollResults[data.id]){
+					pollResults[data.id].responseValue += data.responseValue;
+					pollResults[data.id].numResponses++;
+				}else{
+					pollResults[data.id] = {};
+					pollResults[data.id].responseValue = data.responseValue;
+					pollResults[data.id].numResponses = 1;
+				}
+				socket.broadcast.emit('pollResults', pollResults);
+				socket.emit('pollResults', pollResults);
 				console.log('INSERT DATA:' + JSON.stringify(data));
+
 			}else{
 				console.log('QUESTION ALREADY ANSWER');
 			}
