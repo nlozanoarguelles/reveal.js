@@ -171,7 +171,7 @@ function PollClient(ioInstance) {
     function getCookie(c_name) {
         //cambiar la parte [a-zA-Z0-9] por el diccionario de caracteres valido
         //Nota: los espacios estan puestos tal cual no como \s
-        var string = " ?" + c_name + "=( *[a-zA-Z0-9\-\_]*)*";
+        var string = " ?" + c_name + "=( *[a-zA-Z0-9\-\_\%]*)*";
         var regex = new RegExp(string);
         //var c_value = document.cookie;
         var c_value = document.cookie;
@@ -203,18 +203,18 @@ function PollClient(ioInstance) {
             callback(false);
         }
     }
-    socket.emit('reboot-data',{uuid: getCookie("uuid")});
+    socket.emit('reboot-data', { uuid: getCookie("uuid") });
     socket.on('pollResults', function(pollResults) {
-        for(var pollQuestion in pollResults){
-            if(_self.answerManager.pollResults[pollQuestion]){
+        for (var pollQuestion in pollResults) {
+            if (_self.answerManager.pollResults[pollQuestion]) {
                 _self.answerManager.pollResults[pollQuestion].responseValue = pollResults[pollQuestion].responseValue || _self.answerManager.pollResults[pollQuestion].responseValue;
                 _self.answerManager.pollResults[pollQuestion].numResponses = pollResults[pollQuestion].numResponses || _self.answerManager.pollResults[pollQuestion].numResponses;
                 _self.answerManager.pollResults[pollQuestion].ownResponse = pollResults[pollQuestion].ownResponse || _self.answerManager.pollResults[pollQuestion].ownResponse;
-            }else{
-                _self.answerManager.pollResults[pollQuestion] =  pollResults[pollQuestion];
+            } else {
+                _self.answerManager.pollResults[pollQuestion] = pollResults[pollQuestion];
             }
         }
-         
+
         console.log(_self.answerManager.pollResults);
         for (var questionId in _self.answerManager.pollResults) {
             Highcharts.chart(questionId + '-results-chart', {
@@ -326,5 +326,125 @@ function PollClient(ioInstance) {
             });
 
         }
+        var totalPoints = 0;
+        var totalOwnedPoints = 0;
+        for(var questionId in _self.answerManager.pollResults){
+            if(_self.answerManager.pollResults[questionId].numResponses && _self.answerManager.pollResults[questionId].responseValue > 0){
+                totalPoints += _self.answerManager.pollResults[questionId].responseValue/_self.answerManager.pollResults[questionId].numResponses;
+            }
+            if(_self.answerManager.pollResults[questionId].ownResponse > 0){
+                totalOwnedPoints += _self.answerManager.pollResults[questionId].ownResponse;
+            }
+             
+        }
+
+        Highcharts.chart('final-results-chart', {
+
+            chart: {
+                type: 'solidgauge',
+                height: '80%',
+                backgroundColor: '#00ADDA'
+            },
+            title: {
+                text: 'Resultados Finales',
+                style: {
+                    fontSize: '45px',
+                    color: '#fff'
+                },
+                enable: false
+            },
+            tooltip: {
+                borderWidth: 0,
+                backgroundColor: 'none',
+                shadow: false,
+                style: {
+                    fontSize: '30px',
+                },
+                pointFormat: '<span style="color:#fff;">{series.name}</span><br><span style="font-size:2.5em; color: {point.color}; font-weight: bold">{point.y}</span>',
+                positioner: function(labelWidth) {
+                    return {
+                        x: (this.chart.chartWidth - labelWidth) / 2,
+                        y: (this.chart.plotHeight / 2) + 15
+                    };
+                }
+            },
+
+            pane: {
+                startAngle: 0,
+                endAngle: 360,
+                background: [{ // Track for Move
+                        outerRadius: '112%',
+                        innerRadius: '88%',
+                        backgroundColor: Highcharts.Color('#7ED085')
+                            .setOpacity(0.4)
+                            .get(),
+                        borderWidth: 0
+                    }, { // Track for Exercise
+                        outerRadius: '87%',
+                        innerRadius: '63%',
+                        backgroundColor: Highcharts.Color('#D9DBAA')
+                            .setOpacity(0.4)
+                            .get(),
+                        borderWidth: 0
+                    },
+
+                    { // Track for Stand
+                        outerRadius: '62%',
+                        innerRadius: '38%',
+                        backgroundColor: Highcharts.Color('#D94B3B')
+                            .setOpacity(0.4)
+                            .get(),
+                        borderWidth: 0
+                    }
+                ]
+            },
+
+            yAxis: {
+                min: 0,
+                max: 100,
+                lineWidth: 0,
+                tickPositions: []
+            },
+
+            plotOptions: {
+                solidgauge: {
+                    dataLabels: {
+                        enabled: false
+                    },
+                    linecap: 'round',
+                    stickyTracking: false,
+                    rounded: true
+                }
+            },
+
+            series: [{
+                    name: 'Tu',
+                    data: [{
+                        color: '#7ED085',
+                        radius: '112%',
+                        innerRadius: '88%',
+                        y: Math.round(totalOwnedPoints / 16)
+                    }]
+                }, {
+                    name: 'Sala',
+                    data: [{
+                        color: '#D9DBAA',
+                        radius: '87%',
+                        innerRadius: '63%',
+                        y: Math.round(totalPoints / 16)
+                    }]
+                },
+                {
+                    name: 'España',
+                    data: [{
+                        color: '#D94B3B',
+                        radius: '62%',
+                        innerRadius: '38%',
+                        y: 55
+                    }]
+                }
+            ]
+        });
+
     });
 }
