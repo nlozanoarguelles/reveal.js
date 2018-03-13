@@ -207,9 +207,9 @@ function PollClient(ioInstance) {
     socket.on('pollResults', function(pollResults) {
         for(var pollQuestion in pollResults){
             if(_self.answerManager.pollResults[pollQuestion]){
-                _self.answerManager.pollResults[pollQuestion].responseValue = pollResults[pollQuestion].responseValue || _self.pollResults[pollQuestion].responseValue;
-                _self.answerManager.pollResults[pollQuestion].numResponses = pollResults[pollQuestion].numResponses || _self.pollResults[pollQuestion].numResponses;
-                _self.answerManager.pollResults[pollQuestion].ownResponse = pollResults[pollQuestion].ownResponse || _self.pollResults[pollQuestion].ownResponse;
+                _self.answerManager.pollResults[pollQuestion].responseValue = pollResults[pollQuestion].responseValue || _self.answerManager.pollResults[pollQuestion].responseValue;
+                _self.answerManager.pollResults[pollQuestion].numResponses = pollResults[pollQuestion].numResponses || _self.answerManager.pollResults[pollQuestion].numResponses;
+                _self.answerManager.pollResults[pollQuestion].ownResponse = pollResults[pollQuestion].ownResponse || _self.answerManager.pollResults[pollQuestion].ownResponse;
             }else{
                 _self.answerManager.pollResults[pollQuestion] =  pollResults[pollQuestion];
             }
