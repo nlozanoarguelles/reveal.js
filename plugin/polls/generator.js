@@ -183,7 +183,7 @@ module.exports = function() {
 
     _self.resultsGenerator = function(questionData) {
         var section = sectionGenerator(questionData.id, questionData.type, questionData.data.background);
-        var canvas = cheerio('<canvas id="' + questionData.id + '-chart" width="300" height="300"></canvas');
+        var canvas = cheerio('<div id="' + questionData.id + '-chart" width="300" height="300"></div');
         section.append(canvas);
         section.append('<br>');
         return section;

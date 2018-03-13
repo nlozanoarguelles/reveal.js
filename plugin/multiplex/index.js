@@ -47,6 +47,18 @@ io.on( 'connection', function( socket ) {
 	for(var socketId in lastStates){
 		socket.emit(socketId, lastStates[socketId]);
 	}
+	socket.on('reboot-data', function(data){
+		spreadSheetManager.getUserProfile(data.uuid,function(err,userResponses){
+			var temporalPollResults = JSON.parse(JSON.stringify(pollResults));
+			for(var response in userResponses){
+				temporalPollResults[response] = temporalPollResults[response] || {};
+				temporalPollResults[response].ownResponse = userResponses[response];
+			}
+			socket.emit('pollResults', temporalPollResults);
+		});
+	});
+	
+	
 	socket.on('multiplex-statechanged', function(data) {
 		if (typeof data.secret == 'undefined' || data.secret == null || data.secret === '') return;
 		if (createHash(data.secret) === data.socketId) {
@@ -66,7 +78,7 @@ io.on( 'connection', function( socket ) {
 					data.responseValue = "ERROR";
 				}
 				
-				spreadSheetManager.addUserValue(data.uuid, data.id, data.responseValue);
+				spreadSheetManager.addUserValue(data.uuid, data.id, data.responseValue, function(){console.log(arguments)});
 				fs.appendFileSync(process.env.RESULTS_PATH, JSON.stringify({
 					id:data.id,
 					uuid: data.uuid,
@@ -80,8 +92,11 @@ io.on( 'connection', function( socket ) {
 					pollResults[data.id].responseValue = data.responseValue;
 					pollResults[data.id].numResponses = 1;
 				}
+
 				socket.broadcast.emit('pollResults', pollResults);
-				socket.emit('pollResults', pollResults);
+				var temporalPollResults = JSON.parse(JSON.stringify(pollResults));
+				temporalPollResults[data.id].ownResponse = data.responseValue;
+				socket.emit('pollResults', temporalPollResults);
 				console.log('INSERT DATA:' + JSON.stringify(data));
 
 			}else{

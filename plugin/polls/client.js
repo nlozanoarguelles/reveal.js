@@ -203,49 +203,119 @@ function PollClient(ioInstance) {
             callback(false);
         }
     }
-
+    socket.emit('reboot-data',{uuid: getCookie("uuid")});
     socket.on('pollResults', function(pollResults) {
         _self.pollResults = pollResults;
         console.log(pollResults);
         for (var questionId in pollResults) {
-            var ctx = document.getElementById(questionId + '-results-chart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    datasets: [{
-                        label: 'barometro',
-                        data: [_self.answerManager.barometroResults[questionId]],
-                        backgroundColor: [
-                            'rgba(68, 80, 154, 1)',
+            Highcharts.chart(questionId + '-results-chart', {
 
-                        ],
-                        borderColor: [
-                            'rgba(68,80,154,1)',
-
-                        ],
-                        borderWidth: 1
-                    }, {
-                        label: 'DIVISADERO',
-                        data: [pollResults[questionId].responseValue / pollResults[questionId].numResponses],
-                        backgroundColor: [
-                            'rgba(239, 106, 39, 1)'
-                        ],
-                        borderColor: [
-                            'rgba(239, 106, 39, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
+                chart: {
+                    type: 'solidgauge',
+                    height: '80%',
+                    backgroundColor: '#00ADDA'
                 },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
+                title: {
+                    text: 'Resultados',
+                    style: {
+                        fontSize: '45px',
+                        color: '#fff'
+                    },
+                    enable: false
+                },
+                tooltip: {
+                    borderWidth: 0,
+                    backgroundColor: 'none',
+                    shadow: false,
+                    style: {
+                        fontSize: '30px',
+                    },
+                    pointFormat: '<span style="color:#fff;">{series.name}</span><br><span style="font-size:2.5em; color: {point.color}; font-weight: bold">{point.y}</span>',
+                    positioner: function(labelWidth) {
+                        return {
+                            x: (this.chart.chartWidth - labelWidth) / 2,
+                            y: (this.chart.plotHeight / 2) + 15
+                        };
+                    }
+                },
+
+                pane: {
+                    startAngle: 0,
+                    endAngle: 360,
+                    background: [{ // Track for Move
+                            outerRadius: '112%',
+                            innerRadius: '88%',
+                            backgroundColor: Highcharts.Color('#7ED085')
+                                .setOpacity(0.4)
+                                .get(),
+                            borderWidth: 0
+                        }, { // Track for Exercise
+                            outerRadius: '87%',
+                            innerRadius: '63%',
+                            backgroundColor: Highcharts.Color('#D9DBAA')
+                                .setOpacity(0.4)
+                                .get(),
+                            borderWidth: 0
+                        },
+
+                        { // Track for Stand
+                            outerRadius: '62%',
+                            innerRadius: '38%',
+                            backgroundColor: Highcharts.Color('#D94B3B')
+                                .setOpacity(0.4)
+                                .get(),
+                            borderWidth: 0
+                        }
+                    ]
+                },
+
+                yAxis: {
+                    min: 0,
+                    max: 100,
+                    lineWidth: 0,
+                    tickPositions: []
+                },
+
+                plotOptions: {
+                    solidgauge: {
+                        dataLabels: {
+                            enabled: false
+                        },
+                        linecap: 'round',
+                        stickyTracking: false,
+                        rounded: true
+                    }
+                },
+
+                series: [{
+                        name: 'Tu',
+                        data: [{
+                            color: '#7ED085',
+                            radius: '112%',
+                            innerRadius: '88%',
+                            y: Math.round(pollResults[questionId].ownResponse)
+                        }]
+                    }, {
+                        name: 'Sala',
+                        data: [{
+                            color: '#D9DBAA',
+                            radius: '87%',
+                            innerRadius: '63%',
+                            y: Math.round(pollResults[questionId].responseValue / pollResults[questionId].numResponses)
+                        }]
+                    },
+                    {
+                        name: 'España',
+                        data: [{
+                            color: '#D94B3B',
+                            radius: '62%',
+                            innerRadius: '38%',
+                            y: _self.answerManager.barometroResults[questionId]
                         }]
                     }
-                }
+                ]
             });
+
         }
     });
 }
