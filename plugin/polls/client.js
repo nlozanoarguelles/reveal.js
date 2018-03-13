@@ -205,7 +205,16 @@ function PollClient(ioInstance) {
     }
     socket.emit('reboot-data',{uuid: getCookie("uuid")});
     socket.on('pollResults', function(pollResults) {
-        _self.pollResults = pollResults;
+        for(var pollQuestion in pollResults){
+            if(_self.pollResults[pollQuestion]){
+                _self.pollResults[pollQuestion].responseValue = pollResults[pollQuestion].responseValue || _self.pollResults[pollQuestion].responseValue;
+                _self.pollResults[pollQuestion].numResponses = pollResults[pollQuestion].numResponses || _self.pollResults[pollQuestion].numResponses;
+                _self.pollResults[pollQuestion].ownResponse = pollResults[pollQuestion].ownResponse || _self.pollResults[pollQuestion].ownResponse;
+            }else{
+                _self.pollResults[pollQuestion] =  pollResults[pollQuestion];
+            }
+        }
+         
         console.log(pollResults);
         for (var questionId in pollResults) {
             Highcharts.chart(questionId + '-results-chart', {
