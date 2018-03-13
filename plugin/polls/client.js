@@ -203,6 +203,7 @@ function PollClient(ioInstance) {
             callback(false);
         }
     }
+    jQuery('#download-barometro a').attr('href','http://www.divisadero.es/barometro-madurez-digital-espa%C3%B1a-2018?utm_source=barometro-quiz&utm_campaign=ie-13-03-2018&euuid='+getCookie("uuid"))
     socket.emit('reboot-data', { uuid: getCookie("uuid") });
     socket.on('pollResults', function(pollResults) {
         for (var pollQuestion in pollResults) {
