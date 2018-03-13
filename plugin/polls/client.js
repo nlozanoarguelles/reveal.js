@@ -6,7 +6,7 @@ function PollClient(ioInstance) {
     var socket = io.connect(socketURL);
     _self.answerManager = {
         answeredQuestions: [],
-        pollResutls: {},
+        pollResults: {},
         answerListener: {
             singleChoice: function(singleChoiceElement) {
                 var questionId = singleChoiceElement.attr('id');
