@@ -206,17 +206,17 @@ function PollClient(ioInstance) {
     socket.emit('reboot-data',{uuid: getCookie("uuid")});
     socket.on('pollResults', function(pollResults) {
         for(var pollQuestion in pollResults){
-            if(_self.pollResults[pollQuestion]){
-                _self.pollResults[pollQuestion].responseValue = pollResults[pollQuestion].responseValue || _self.pollResults[pollQuestion].responseValue;
-                _self.pollResults[pollQuestion].numResponses = pollResults[pollQuestion].numResponses || _self.pollResults[pollQuestion].numResponses;
-                _self.pollResults[pollQuestion].ownResponse = pollResults[pollQuestion].ownResponse || _self.pollResults[pollQuestion].ownResponse;
+            if(_self.answerManager.pollResults[pollQuestion]){
+                _self.answerManager.pollResults[pollQuestion].responseValue = pollResults[pollQuestion].responseValue || _self.pollResults[pollQuestion].responseValue;
+                _self.answerManager.pollResults[pollQuestion].numResponses = pollResults[pollQuestion].numResponses || _self.pollResults[pollQuestion].numResponses;
+                _self.answerManager.pollResults[pollQuestion].ownResponse = pollResults[pollQuestion].ownResponse || _self.pollResults[pollQuestion].ownResponse;
             }else{
-                _self.pollResults[pollQuestion] =  pollResults[pollQuestion];
+                _self.answerManager.pollResults[pollQuestion] =  pollResults[pollQuestion];
             }
         }
          
-        console.log(pollResults);
-        for (var questionId in pollResults) {
+        console.log(_self.answerManager.pollResults);
+        for (var questionId in _self.answerManager.pollResults) {
             Highcharts.chart(questionId + '-results-chart', {
 
                 chart: {
@@ -302,7 +302,7 @@ function PollClient(ioInstance) {
                             color: '#7ED085',
                             radius: '112%',
                             innerRadius: '88%',
-                            y: Math.round(pollResults[questionId].ownResponse)
+                            y: Math.round(_self.answerManager.pollResults[questionId].ownResponse)
                         }]
                     }, {
                         name: 'Sala',
@@ -310,7 +310,7 @@ function PollClient(ioInstance) {
                             color: '#D9DBAA',
                             radius: '87%',
                             innerRadius: '63%',
-                            y: Math.round(pollResults[questionId].responseValue / pollResults[questionId].numResponses)
+                            y: Math.round(_self.answerManager.pollResults[questionId].responseValue / _self.answerManager.pollResults[questionId].numResponses)
                         }]
                     },
                     {
